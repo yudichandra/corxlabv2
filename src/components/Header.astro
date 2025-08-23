@@ -9,6 +9,8 @@ import HeaderLink from './HeaderLink.astro';
 		<div class="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
+			<HeaderLink href="/news">News</HeaderLink>
+			<HeaderLink href="/games">Games</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
 		<div class="social-links">
@@ -62,7 +64,9 @@ import HeaderLink from './HeaderLink.astro';
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: .5rem;
 	}
+	.internal-links { display: flex; flex-wrap: wrap; gap: .25rem; }
 	nav a {
 		padding: 1em 0.5em;
 		color: var(--black);
@@ -78,8 +82,6 @@ import HeaderLink from './HeaderLink.astro';
 		display: flex;
 	}
 	@media (max-width: 720px) {
-		.social-links {
-			display: none;
-		}
+		.social-links { display: none; }
 	}
 </style>

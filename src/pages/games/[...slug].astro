@@ -1,0 +1,59 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+export async function getStaticPaths() {
+  const items = await getCollection('games');
+  return items.map((item) => ({ params: { slug: item.id }, props: item }));
+}
+
+const entry = Astro.props as CollectionEntry<'games'>;
+const { Content } = await render(entry);
+const { title, description, coverImage, gallery = [], platforms = [] } = entry.data;
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={`${title} | CORXLAB`} description={description} />
+    <style>
+      .hero { width: 100%; max-width: 100%; }
+      .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1rem 0; }
+      .gallery img { width: 100%; height: auto; border-radius: 8px; }
+      .platforms { display: flex; gap: .5rem; flex-wrap: wrap; }
+      .btn { text-decoration: none; padding: .5rem .75rem; border-radius: 8px; background: var(--accent); color: white; }
+      @media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 600px) { .gallery { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main class="prose">
+      <h1>{title}</h1>
+      {coverImage ? (
+        <img class="hero" src={coverImage.src} alt={title} width={coverImage.width} height={coverImage.height} />
+      ) : null}
+      <p>{description}</p>
+
+      {gallery.length ? (
+        <div class="gallery">
+          {gallery.map(img => (
+            <img src={img.src} alt={title} width={img.width} height={img.height} />
+          ))}
+        </div>
+      ) : null}
+
+      <Content />
+
+      {platforms.length ? (
+        <div style="margin-top: 1rem;" class="platforms">
+          {platforms.map(p => (
+            <a class="btn" href={p.url} target="_blank" rel="noopener noreferrer">Download on {p.name}</a>
+          ))}
+        </div>
+      ) : null}
+    </main>
+    <Footer />
+  </body>
+</html>

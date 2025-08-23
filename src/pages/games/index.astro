@@ -1,0 +1,48 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection } from "astro:content";
+
+const games = (await getCollection("games")).sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title="Games | CORXLAB" description="Game showcases by CORXLAB" />
+    <style>
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+      .card { background: #fff; border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; display: flex; flex-direction: column; }
+      .cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: rgb(var(--gray-light)); }
+      .platforms { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+      .badge { font-size: .85rem; padding: .25rem .5rem; border-radius: 999px; background: rgb(var(--gray-light)); color: rgb(var(--gray-dark)); }
+      @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+      @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Games</h1>
+      <div class="grid">
+        {games.map(({ id, data }) => (
+          <a class="card" href={`/games/${id}/`}>
+            {data.coverImage ? (
+              <img class="cover" src={data.coverImage.src} alt={data.title} width={data.coverImage.width} height={data.coverImage.height} />
+            ) : (
+              <div class="cover" />
+            )}
+            <h3 style="margin-top: .75rem;">{data.title}</h3>
+            <p style="margin: 0;">{data.description}</p>
+            {data.platforms?.length ? (
+              <div class="platforms">
+                {data.platforms.map(p => <span class="badge">{p.name}</span>)}
+              </div>
+            ) : null}
+          </a>
+        ))}
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

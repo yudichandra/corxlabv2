@@ -153,3 +153,41 @@ hr {
 	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
+
+/* Shared utilities */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 1024px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .grid-3 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--box-shadow);
+  padding: 1rem;
+}
+.card-link { text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+
+.cover-16x9 {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgb(var(--gray-light));
+}
+
+.badge {
+  display: inline-block;
+  font-size: .85rem;
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  background: rgb(var(--gray-light));
+  color: rgb(var(--gray-dark));
+}

@@ -1,0 +1,38 @@
+---
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("news");
+const sorted = posts.sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title="News | CORXLAB" description="Latest CORXLAB news and updates" />
+    <style>
+      ul { list-style: none; padding: 0; margin: 1rem 0; display: grid; gap: 1rem; }
+      li { background: #fff; border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; }
+      a { text-decoration: none; }
+      .desc { color: rgb(var(--gray)); margin-top: .25rem; }
+    </style>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>News</h1>
+      <ul>
+        {sorted.map(({ id, data }) => (
+          <li>
+            <a href={`/news/${id}/`}>
+              <strong>{data.title}</strong>
+            </a>
+            <div class="desc">{data.description}</div>
+          </li>
+        ))}
+      </ul>
+    </main>
+    <Footer />
+  </body>
+</html>
