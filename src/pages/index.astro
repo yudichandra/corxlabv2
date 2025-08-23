@@ -16,16 +16,21 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 			.hero { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; text-align: center; }
 			.hero h1 { margin-bottom: .5rem; }
 			.hero p { color: rgb(var(--gray)); }
-			.stack { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; margin: 1rem 0 2rem; }
-			.badge { padding: .4rem .75rem; border-radius: 999px; background: rgb(var(--gray-light)); color: rgb(var(--gray-dark)); font-weight: 700; }
+			.techstack { display: grid; grid-template-columns: repeat(3, minmax(140px, 1fr)); gap: 1.25rem; align-items: center; justify-items: center; margin: 1.25rem auto 2rem; max-width: 820px; }
+			.ts-item { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+			.ts-logo { width: 140px; height: 140px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(180deg, #fff 0%, #f6f7fb 100%); border: 1px solid rgba(0,0,0,.06); box-shadow: 0 6px 20px rgba(0,0,0,.06), 0 1px 0 rgba(255,255,255,.8) inset; will-change: transform, filter; position: relative; overflow: hidden; cursor: pointer; transform-style: preserve-3d; }
+			.ts-logo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120px 60px at -20% -20%, rgba(255,255,255,.7), transparent 60%), radial-gradient(120px 60px at 120% 120%, rgba(0,0,0,.04), transparent 60%); pointer-events: none; }
+			.ts-img { width: 72%; height: 72%; object-fit: contain; }
+			.ts-name { font-weight: 700; color: rgb(var(--gray-dark)); }
 			.grid { max-width: 960px; margin: 0 auto; padding: 0 1rem 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 			.card { background: #fff; border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
 			.cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: rgb(var(--gray-light)); }
 			.card h3 { margin-top: .75rem; }
 			.card p { margin: 0; color: rgb(var(--gray)); }
 			.section-title { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
-			@media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-			@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+			@media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } .techstack { grid-template-columns: repeat(3, minmax(120px, 1fr)); } .ts-logo { width: 120px; height: 120px; } }
+			@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .techstack { grid-template-columns: repeat(3, minmax(100px, 1fr)); gap: .75rem; } .ts-logo { width: 100px; height: 100px; } }
+			@media (prefers-reduced-motion: reduce) { .ts-logo { transition: none !important; } }
 		</style>
 	</head>
 	<body>
@@ -34,10 +39,25 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 			<section class="hero">
 				<h1>We are CORXLAB</h1>
 				<p>Indie game developer studio. Read our devlog and news, and discover our games.</p>
-				<div class="stack">
-					<span class="badge">Unity</span>
-					<span class="badge">Unreal Engine</span>
-					<span class="badge">Godot</span>
+				<div class="techstack" id="techstack">
+					<div class="ts-item">
+						<div class="ts-logo" data-anim>
+							<img class="ts-img" src="https://cdn.simpleicons.org/unity/000000" alt="Unity" loading="lazy" />
+						</div>
+						<span class="ts-name">Unity</span>
+					</div>
+					<div class="ts-item">
+						<div class="ts-logo" data-anim>
+							<img class="ts-img" src="https://cdn.simpleicons.org/unrealengine/000000" alt="Unreal Engine" loading="lazy" />
+						</div>
+						<span class="ts-name">Unreal Engine</span>
+					</div>
+					<div class="ts-item">
+						<div class="ts-logo" data-anim>
+							<img class="ts-img" src="https://cdn.simpleicons.org/godotengine/478CBF" alt="Godot" loading="lazy" />
+						</div>
+						<span class="ts-name">Godot</span>
+					</div>
 				</div>
 			</section>
 
@@ -57,5 +77,51 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 			</div>
 		</main>
 		<Footer />
+		<!-- GSAP for fluid tech stack animation -->
+		<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+		<script defer>
+			document.addEventListener('DOMContentLoaded', () => {
+				if (!window.gsap) return;
+				const items = Array.from(document.querySelectorAll('[data-anim]'));
+
+				// Subtle idle float animation
+				items.forEach((el, i) => {
+					const delay = 0.15 * i;
+					const dx = 4 + Math.random() * 6; // 4-10px
+					const dy = 6 + Math.random() * 8; // 6-14px
+					gsap.to(el, { y: dy, x: dx, duration: 2.4 + Math.random() * 1.6, yoyo: true, repeat: -1, ease: 'sine.inOut', delay });
+				});
+
+				// Hover interactions with 3D tilt
+				items.forEach((el) => {
+					let hoverTl;
+					const maxTilt = 8; // deg
+					const onMove = (e) => {
+						const rect = el.getBoundingClientRect();
+						const cx = rect.left + rect.width / 2;
+						const cy = rect.top + rect.height / 2;
+						const dx = (e.clientX - cx) / (rect.width / 2);
+						const dy = (e.clientY - cy) / (rect.height / 2);
+						const rotY = gsap.utils.clamp(-1, 1, dx) * maxTilt; // left/right
+						const rotX = -gsap.utils.clamp(-1, 1, dy) * maxTilt; // up/down
+						gsap.to(el, { duration: 0.2, rotateY: rotY, rotateX: rotX, transformPerspective: 700 });
+					};
+					el.addEventListener('mouseenter', () => {
+						hoverTl && hoverTl.kill();
+						hoverTl = gsap.timeline({ defaults: { ease: 'sine.out' } });
+						hoverTl.to(el, { duration: 0.25, y: '-=6', scale: 1.05, boxShadow: '0 14px 30px rgba(0,0,0,.16)', filter: 'drop-shadow(0 6px 16px rgba(0,0,0,.12))' }, 0);
+						window.addEventListener('mousemove', onMove);
+					});
+					el.addEventListener('mouseleave', () => {
+						hoverTl && hoverTl.kill();
+						window.removeEventListener('mousemove', onMove);
+						gsap.to(el, { duration: 0.35, y: 0, scale: 1, rotate: 0, rotateX: 0, rotateY: 0, boxShadow: '0 6px 20px rgba(0,0,0,.06)', filter: 'none', ease: 'sine.inOut' });
+					});
+					// Keyboard accessibility
+					el.addEventListener('focus', () => el.dispatchEvent(new Event('mouseenter')));
+					el.addEventListener('blur', () => el.dispatchEvent(new Event('mouseleave')));
+				});
+			});
+		</script>
 	</body>
 </html>
