@@ -14,13 +14,18 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			.hero { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; text-align: center; }
-			.hero h1 { margin-bottom: .5rem; }
+			.hero h1 { margin-bottom: .5rem; font-size: clamp(1.75rem, 3vw + .5rem, 2.5rem); font-weight: 800; }
 			.hero p { color: rgb(var(--gray)); }
+			.hero-typing { display: inline-flex; align-items: center; gap: .25rem; }
+			.caret { width: 2px; height: 1.2em; background: currentColor; display: inline-block; translate: 0 .15em; opacity: 1; animation: blink 1s steps(1) infinite; }
+			@keyframes blink { 50% { opacity: 0; } }
 			.techstack { display: grid; grid-template-columns: repeat(3, minmax(140px, 1fr)); gap: 1.25rem; align-items: center; justify-items: center; margin: 1.25rem auto 2rem; max-width: 820px; }
 			.ts-item { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
 			.ts-logo { width: 140px; height: 140px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(180deg, #fff 0%, #f6f7fb 100%); border: 1px solid rgba(0,0,0,.06); box-shadow: 0 6px 20px rgba(0,0,0,.06), 0 1px 0 rgba(255,255,255,.8) inset; will-change: transform, filter; position: relative; overflow: hidden; cursor: pointer; transform-style: preserve-3d; }
 			.ts-logo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120px 60px at -20% -20%, rgba(255,255,255,.7), transparent 60%), radial-gradient(120px 60px at 120% 120%, rgba(0,0,0,.04), transparent 60%); pointer-events: none; }
-			.ts-img { width: 72%; height: 72%; object-fit: contain; }
+			.ts-img { width: 72%; height: 72%; object-fit: contain; transform: translateZ(40px); }
+			.sheen { position: absolute; top: -30%; left: -150%; width: 80%; height: 220%; transform: rotate(25deg); background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 48%, rgba(255,255,255,0) 100%); opacity: 0; mix-blend-mode: screen; pointer-events: none; }
+			.ring { position: absolute; left: 50%; top: 50%; width: 20%; height: 20%; transform: translate(-50%, -50%) scale(0); border-radius: 999px; border: 2px solid rgba(100, 170, 255, .8); opacity: 0; pointer-events: none; }
 			.ts-name { font-weight: 700; color: rgb(var(--gray-dark)); }
 			.grid { max-width: 960px; margin: 0 auto; padding: 0 1rem 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
 			.card { background: #fff; border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
@@ -37,23 +42,28 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 		<Header />
 		<main>
 			<section class="hero">
-				<h1>We are CORXLAB</h1>
+				<h1>
+					We <span class="hero-typing"> <span id="hero-dynamic">are CORXLAB</span><span class="caret" aria-hidden="true"></span> </span>
+				</h1>
 				<p>Indie game developer studio. Read our devlog and news, and discover our games.</p>
 				<div class="techstack" id="techstack">
 					<div class="ts-item">
-						<div class="ts-logo" data-anim>
+						<div class="ts-logo" data-anim data-color="#222222">
+							<span class="sheen" aria-hidden="true"></span>
 							<img class="ts-img" src="https://cdn.simpleicons.org/unity/000000" alt="Unity" loading="lazy" />
 						</div>
 						<span class="ts-name">Unity</span>
 					</div>
 					<div class="ts-item">
-						<div class="ts-logo" data-anim>
+						<div class="ts-logo" data-anim data-color="#000000">
+							<span class="sheen" aria-hidden="true"></span>
 							<img class="ts-img" src="https://cdn.simpleicons.org/unrealengine/000000" alt="Unreal Engine" loading="lazy" />
 						</div>
 						<span class="ts-name">Unreal Engine</span>
 					</div>
 					<div class="ts-item">
-						<div class="ts-logo" data-anim>
+						<div class="ts-logo" data-anim data-color="#478CBF">
+							<span class="sheen" aria-hidden="true"></span>
 							<img class="ts-img" src="https://cdn.simpleicons.org/godotengine/478CBF" alt="Godot" loading="lazy" />
 						</div>
 						<span class="ts-name">Godot</span>
@@ -61,7 +71,7 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 				</div>
 			</section>
 
-			<h2 class="section-title">Game Showcase</h2>
+			<h2 class="section-title page-title">Game Showcase</h2>
 			<div class="grid">
 				{games.map(({ id, data }) => (
 					<a class="card" href={`/games/${id}/`}>
@@ -79,48 +89,125 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 		<Footer />
 		<!-- GSAP for fluid tech stack animation -->
 		<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+		<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/TextPlugin.min.js" defer></script>
 		<script defer>
 			document.addEventListener('DOMContentLoaded', () => {
 				if (!window.gsap) return;
+				// Register GSAP TextPlugin if available
+				if (window.gsap && window.gsap.registerPlugin && window.TextPlugin) {
+					gsap.registerPlugin(TextPlugin);
+				}
 				const items = Array.from(document.querySelectorAll('[data-anim]'));
 
-				// Subtle idle float animation
+				// Advanced idle animation (float + rotate + breathing glow)
 				items.forEach((el, i) => {
-					const delay = 0.15 * i;
-					const dx = 4 + Math.random() * 6; // 4-10px
-					const dy = 6 + Math.random() * 8; // 6-14px
-					gsap.to(el, { y: dy, x: dx, duration: 2.4 + Math.random() * 1.6, yoyo: true, repeat: -1, ease: 'sine.inOut', delay });
+					const delay = 0.12 * i;
+					const dx = 3 + Math.random() * 5; // 3-8px
+					const dy = 5 + Math.random() * 7; // 5-12px
+					const rot = (Math.random() - 0.5) * 4; // -2 to 2
+					const tl = gsap.timeline({ repeat: -1, yoyo: true, defaults: { ease: 'sine.inOut' }, delay });
+					tl.to(el, { x: dx, y: dy, duration: 2.2 + Math.random() * 1.4 }, 0)
+					  .to(el, { rotation: rot, duration: 2.8 + Math.random() * 1.2 }, 0)
+					  .to(el, { boxShadow: '0 10px 26px rgba(50,100,255,.14)', duration: 2.2 }, 0);
+					el._idleTl = tl; // store for cleanup
 				});
 
-				// Hover interactions with 3D tilt
+				// Hover interactions: 3D tilt + sheen sweep + ripple + sparkles
 				items.forEach((el) => {
-					let hoverTl;
-					const maxTilt = 8; // deg
+					let hoverTl; const color = el.dataset.color || '#6AA6FF';
+					const img = el.querySelector('.ts-img');
+					const sheen = el.querySelector('.sheen');
+					const maxTilt = 14; // deg (more extreme)
+
 					const onMove = (e) => {
 						const rect = el.getBoundingClientRect();
 						const cx = rect.left + rect.width / 2;
 						const cy = rect.top + rect.height / 2;
 						const dx = (e.clientX - cx) / (rect.width / 2);
 						const dy = (e.clientY - cy) / (rect.height / 2);
-						const rotY = gsap.utils.clamp(-1, 1, dx) * maxTilt; // left/right
-						const rotX = -gsap.utils.clamp(-1, 1, dy) * maxTilt; // up/down
-						gsap.to(el, { duration: 0.2, rotateY: rotY, rotateX: rotX, transformPerspective: 700 });
+						const rotY = gsap.utils.clamp(-1, 1, dx) * maxTilt;
+						const rotX = -gsap.utils.clamp(-1, 1, dy) * maxTilt;
+						gsap.to(el, { duration: 0.16, rotateY: rotY, rotateX: rotX, transformPerspective: 700 });
+						gsap.to(img, { duration: 0.16, x: -dx * 6, y: -dy * 6 }); // slight parallax
 					};
+
+					const burst = () => {
+						const n = 8 + Math.floor(Math.random()*6);
+						for (let i = 0; i < n; i++) {
+							const s = document.createElement('span');
+							s.className = 'spark';
+							const size = 4 + Math.random()*4;
+							Object.assign(s.style, { position:'absolute', left:'50%', top:'50%', width:`${size}px`, height:`${size}px`, borderRadius:'50%', background: color, filter:'brightness(1.2)', pointerEvents:'none' });
+							el.appendChild(s);
+							const angle = Math.random()*Math.PI*2;
+							const dist = 20 + Math.random()*40;
+							const x = Math.cos(angle)*dist;
+							const y = Math.sin(angle)*dist;
+							gsap.to(s, { x, y, opacity:0, scale:0.2, duration: 0.6 + Math.random()*0.3, ease:'power2.out', onComplete: () => s.remove() });
+						}
+					};
+
+					const ripple = () => {
+						const ring = document.createElement('span');
+						ring.className = 'ring';
+						ring.style.borderColor = color;
+						el.appendChild(ring);
+						gsap.to(ring, { scale: 2.6, opacity: 0, duration: 0.8, ease:'sine.out', onComplete: () => ring.remove() });
+					};
+
 					el.addEventListener('mouseenter', () => {
+						el._idleTl && el._idleTl.pause();
 						hoverTl && hoverTl.kill();
 						hoverTl = gsap.timeline({ defaults: { ease: 'sine.out' } });
-						hoverTl.to(el, { duration: 0.25, y: '-=6', scale: 1.05, boxShadow: '0 14px 30px rgba(0,0,0,.16)', filter: 'drop-shadow(0 6px 16px rgba(0,0,0,.12))' }, 0);
+						hoverTl
+						  .to(el, { duration: 0.16, y: '-=8', scale: 1.08, boxShadow: `0 18px 40px ${color}33` }, 0)
+						  .to(sheen, { duration: 0.55, opacity: 1, x: '260%', ease:'power2.out' }, 0)
+						  .to(sheen, { duration: 0.2, opacity: 0 }, '>-0.1');
 						window.addEventListener('mousemove', onMove);
+						ripple();
+						burst();
 					});
+
 					el.addEventListener('mouseleave', () => {
 						hoverTl && hoverTl.kill();
 						window.removeEventListener('mousemove', onMove);
-						gsap.to(el, { duration: 0.35, y: 0, scale: 1, rotate: 0, rotateX: 0, rotateY: 0, boxShadow: '0 6px 20px rgba(0,0,0,.06)', filter: 'none', ease: 'sine.inOut' });
+						gsap.to([el, img], { duration: 0.4, x: 0, y: 0, ease: 'power2.out' });
+						gsap.to(el, { duration: 0.45, scale: 1, rotate: 0, rotateX: 0, rotateY: 0, boxShadow: '0 6px 20px rgba(0,0,0,.06)', ease: 'power2.inOut', onComplete: () => el._idleTl && el._idleTl.resume() });
+						gsap.set(sheen, { x: '-150%', opacity: 0 });
 					});
+
 					// Keyboard accessibility
 					el.addEventListener('focus', () => el.dispatchEvent(new Event('mouseenter')));
 					el.addEventListener('blur', () => el.dispatchEvent(new Event('mouseleave')));
 				});
+
+				// Hero dynamic typing: keep 'We' static, animate suffix
+				const phrases = [
+					'are CORXLAB',
+					'make games',
+					'make apps',
+					'craft experiences',
+				];
+				const elText = document.getElementById('hero-dynamic');
+				let idx = 0;
+				const typeSpeed = 0.04; // seconds per char
+				const hold = 1.2; // seconds hold after type
+				const eraseSpeed = 0.03;
+
+				function cycle() {
+					const next = phrases[idx % phrases.length];
+					const prev = elText.textContent || '';
+					// Erase previous
+					const eraseTl = gsap.timeline();
+					eraseTl.to(elText, { duration: Math.max(prev.length * eraseSpeed, 0.3), text: '' });
+					// Type next
+					eraseTl.to(elText, { duration: Math.max(next.length * typeSpeed, 0.4), text: next, ease: 'none' });
+					eraseTl.to({}, { duration: hold });
+					eraseTl.call(() => { idx++; cycle(); });
+				}
+				if (window.TextPlugin) {
+					cycle();
+				}
 			});
 		</script>
 	</body>

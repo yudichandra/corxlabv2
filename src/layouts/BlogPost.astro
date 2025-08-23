@@ -35,6 +35,12 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				margin: auto;
 				padding: 1em;
 				color: rgb(var(--gray-dark));
+				font-weight: 300; /* lighter body text for long-form readability */
+			}
+			.prose h2 { font-weight: 600; }
+			/* Lighter subheadings inside blog content */
+			.prose h3 {
+				font-weight: 400;
 			}
 			.title {
 				margin-bottom: 1em;

@@ -16,6 +16,7 @@ const games = (await getCollection("games")).sort((a, b) => +b.data.pubDate - +a
       .cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: rgb(var(--gray-light)); }
       .platforms { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
       .badge { font-size: .85rem; padding: .25rem .5rem; border-radius: 999px; background: rgb(var(--gray-light)); color: rgb(var(--gray-dark)); }
+      .page-title { margin: 0 0 1rem 0; }
       @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } }
       @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
     </style>
@@ -23,7 +24,7 @@ const games = (await getCollection("games")).sort((a, b) => +b.data.pubDate - +a
   <body>
     <Header />
     <main>
-      <h1>Games</h1>
+      <h1 class="page-title">Games</h1>
       <div class="grid">
         {games.map(({ id, data }) => (
           <a class="card" href={`/games/${id}/`}>

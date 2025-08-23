@@ -16,12 +16,13 @@ const sorted = posts.sort((a, b) => +b.data.pubDate - +a.data.pubDate);
       li { background: #fff; border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; }
       a { text-decoration: none; }
       .desc { color: rgb(var(--gray)); margin-top: .25rem; }
+      .page-title { margin: 0 0 1rem 0; }
     </style>
   </head>
   <body>
     <Header />
     <main>
-      <h1>News</h1>
+      <h1 class="page-title">News</h1>
       <ul>
         {sorted.map(({ id, data }) => (
           <li>
