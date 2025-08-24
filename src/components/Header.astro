@@ -48,9 +48,17 @@ import HeaderLink from './HeaderLink.astro';
 	header {
 		margin: 0;
 		padding: 0 1em;
-		background: white;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
+		background: rgba(var(--surface), .85);
+		-webkit-backdrop-filter: saturate(180%) blur(10px);
+		backdrop-filter: saturate(180%) blur(10px);
+		box-shadow: none;
+		position: sticky; /* keep visible while scrolling */
+		top: 0;
+		z-index: 1000;
+		border-bottom: 1px solid rgba(var(--border), .35);
+		transition: background .25s ease, box-shadow .25s ease, transform .25s ease;
 	}
+	header.scrolled { background: rgba(var(--surface-2), .98); box-shadow: 0 10px 30px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.05) inset; }
 	h2 {
 		margin: 0;
 		font-size: 1em;
@@ -69,7 +77,7 @@ import HeaderLink from './HeaderLink.astro';
 	.internal-links { display: flex; flex-wrap: wrap; gap: .25rem; }
 	nav a {
 		padding: 1em 0.5em;
-		color: var(--black);
+		color: rgb(var(--text-strong));
 		border-bottom: 4px solid transparent;
 		text-decoration: none;
 	}
@@ -85,3 +93,54 @@ import HeaderLink from './HeaderLink.astro';
 		.social-links { display: none; }
 	}
 </style>
+
+<script>
+  // @ts-nocheck
+  // Sticky header animations with GSAP (fallback to CSS only if GSAP unavailable)
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.querySelector('header');
+    if (!el) return;
+
+    const threshold = 12; // px before applying scrolled state
+    const HIDE_Y = -64;   // translateY when hidden
+    const DUR_SHOW = 0.42;
+    const DUR_HIDE = 0.28;
+    const DUR_REVEAL_LOAD = 0.55;
+
+    // Initial reveal animation
+    const gsapLocal = (window && (window as any).gsap) as any | undefined;
+    if (gsapLocal) {
+      try {
+        gsapLocal.fromTo(el, { y: HIDE_Y }, { y: 0, duration: DUR_REVEAL_LOAD, ease: 'power2.out' });
+      } catch {}
+    }
+
+    let last = window.scrollY;
+    function onScroll() {
+      const y = window.scrollY || 0;
+      const scrolled = y > threshold;
+      el.classList.toggle('scrolled', scrolled);
+
+      // Hide on scroll down, show on scroll up (full)
+      if (gsapLocal) {
+        const goingDown = y > last + 2; // add hysteresis
+        const goingUp = y < last - 2;
+        if (goingDown && y > threshold) {
+          gsapLocal.to(el, { y: HIDE_Y, duration: DUR_HIDE, ease: 'power2.out' });
+        } else if (goingUp) {
+          gsapLocal.to(el, { y: 0, duration: DUR_SHOW, ease: 'power2.out' });
+        }
+      }
+      last = y;
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Respect reduced motion
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced && gsapLocal) {
+      gsapLocal.set(el, { clearProps: 'all' });
+    }
+  });
+</script>

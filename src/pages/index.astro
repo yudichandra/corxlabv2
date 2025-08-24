@@ -13,43 +13,75 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			.hero { max-width: 960px; margin: 0 auto; padding: 2rem 1rem; text-align: center; }
-			.hero h1 { margin-bottom: .5rem; font-size: clamp(1.75rem, 3vw + .5rem, 2.5rem); font-weight: 800; }
-			.hero p { color: rgb(var(--gray)); }
+			/* reset body margin to avoid any white gap */
+			body { margin: 0; }
+			.hero { position: relative; margin: 0; padding: 0 1rem; background: url('/background.jpg') center 25%/cover no-repeat; color: #fff; 
+				/* full-bleed breakout */
+				width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+				min-height: clamp(420px, 75vh, 760px);
+				display: grid; place-items: center;
+				overflow: hidden;
+			}
+			.hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,12,20,.55) 0%, rgba(8,12,20,.35) 60%, rgba(8,12,20,.55) 100%); pointer-events: none; }
+			.hero .inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; text-align: center; padding: 0 1rem; }
+			.hero h1 { margin: 0 0 .5rem 0; font-size: clamp(1.9rem, 3.2vw + .5rem, 2.8rem); font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+			.hero p { color: rgba(255,255,255,.9); }
+			@media (max-width: 1024px) {
+				.hero { min-height: 60vh; background-position: center 35%; }
+			}
+			@media (max-width: 640px) {
+				.hero { min-height: 50vh; background-position: center 40%; padding: 0 1rem; }
+			}
 			.hero-typing { display: inline-flex; align-items: center; gap: .25rem; }
 			.caret { width: 2px; height: 1.2em; background: currentColor; display: inline-block; translate: 0 .15em; opacity: 1; animation: blink 1s steps(1) infinite; }
 			@keyframes blink { 50% { opacity: 0; } }
-			.techstack { display: grid; grid-template-columns: repeat(3, minmax(140px, 1fr)); gap: 1.25rem; align-items: center; justify-items: center; margin: 1.25rem auto 2rem; max-width: 820px; }
+			.techstack { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.25rem; align-items: center; justify-items: center; margin: 1.25rem auto 2rem; max-width: 1200px; }
 			.ts-item { display: flex; flex-direction: column; align-items: center; gap: .5rem; text-decoration: none; color: inherit; }
-			.ts-logo { width: 140px; height: 140px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(180deg, #fff 0%, #f6f7fb 100%); border: 1px solid rgba(0,0,0,.06); box-shadow: 0 6px 20px rgba(0,0,0,.06), 0 1px 0 rgba(255,255,255,.8) inset; will-change: transform, filter; position: relative; overflow: hidden; cursor: pointer; transform-style: preserve-3d; }
-			.ts-logo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120px 60px at -20% -20%, rgba(255,255,255,.7), transparent 60%), radial-gradient(120px 60px at 120% 120%, rgba(0,0,0,.04), transparent 60%); pointer-events: none; }
+			.ts-logo { width: 140px; height: 140px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(180deg, rgba(var(--surface),1) 0%, rgba(var(--surface-2),1) 100%); border: 1px solid rgba(var(--border), .35); box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05); will-change: transform, filter; position: relative; overflow: hidden; cursor: pointer; transform-style: preserve-3d; }
+			.ts-logo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120px 60px at -20% -20%, rgba(255,255,255,.06), transparent 60%), radial-gradient(120px 60px at 120% 120%, rgba(255,255,255,.03), transparent 60%); pointer-events: none; }
 			.ts-img { width: 72%; height: 72%; object-fit: contain; transform: translateZ(40px); }
 			.sheen { position: absolute; top: -30%; left: -150%; width: 80%; height: 220%; transform: rotate(25deg); background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 48%, rgba(255,255,255,0) 100%); opacity: 0; mix-blend-mode: screen; pointer-events: none; }
 			.ring { position: absolute; left: 50%; top: 50%; width: 20%; height: 20%; transform: translate(-50%, -50%) scale(0); border-radius: 999px; border: 2px solid rgba(100, 170, 255, .8); opacity: 0; pointer-events: none; }
-			.ts-name { font-weight: 700; color: rgb(var(--gray-dark)); }
-			.grid { max-width: 960px; margin: 0 auto; padding: 0 1rem 2rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-			.card { background: #fff; border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
-			.cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: rgb(var(--gray-light)); }
+			.ts-name { font-weight: 700; color: rgb(var(--gray-dark)); text-align: center; }
+			.center-title { text-align: center; }
+			.grid { max-width: 1200px; margin: 0 auto; padding: 0 1rem 2rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+			.card { background: rgb(var(--surface)); border: 1px solid rgba(var(--border), .35); border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+			.cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: rgb(var(--surface)); }
 			.card h3 { margin-top: .75rem; }
 			.card p { margin: 0; color: rgb(var(--gray)); }
-			.section-title { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
-			@media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } .techstack { grid-template-columns: repeat(3, minmax(120px, 1fr)); } .ts-logo { width: 120px; height: 120px; } }
-			@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .techstack { grid-template-columns: repeat(3, minmax(100px, 1fr)); gap: .75rem; } .ts-logo { width: 100px; height: 100px; } }
+			.section-title { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+			.section-block { position: relative; padding-top: 4rem; margin-top: 2.5rem; }
+			.section-block::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(var(--border), .35), rgba(255,255,255,0)); }
+			.games-section .section-title { margin-bottom: 1rem; }
+			.games-section .grid { padding-top: 0; gap: 1.25rem; }
+			.games-section .card { padding: .75rem; }
+			.games-section .cover { margin-bottom: .5rem; border-radius: 10px; aspect-ratio: 5 / 4; }
+			.games-section .card h3 { margin: .25rem 0 0; }
+			.games-section .card p { display: none; }
+			@media (max-width: 1280px) { .grid { grid-template-columns: repeat(3, 1fr); } .techstack { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); } }
+			@media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } .techstack { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); } .ts-logo { width: 120px; height: 120px; }
+			@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .techstack { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: .75rem; } .ts-logo { width: 100px; height: 100px; } .games-section .cover { aspect-ratio: 4 / 3; } }
 			@media (prefers-reduced-motion: reduce) { .ts-logo { transition: none !important; } }
+			/* Tech Stack title visuals (centered) */
+			#techstack-title { display: block; position: relative; cursor: pointer; margin: 0 auto; width: max-content; text-align: center; }
+			#techstack-title .title-underline { content: ""; position: absolute; left: 50%; transform: translateX(-50%); bottom: -6px; height: 2px; width: 58%; background: linear-gradient(90deg, var(--accent), transparent 80%); border-radius: 2px; opacity: .9; }
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
 			<section class="hero">
-				<h1>
-					We <span class="hero-typing"> <span id="hero-dynamic">are CORXLAB</span><span class="caret" aria-hidden="true"></span> </span>
-				</h1>
-				<p>Indie game developer studio. Read our devlog and news, and discover our games.</p>
+				<div class="inner">
+					<h1>
+						We <span class="hero-typing"> <span id="hero-dynamic">are CORXLAB</span><span class="caret" aria-hidden="true"></span> </span>
+					</h1>
+					<p>Indie game developer studio. Read our devlog and news, and discover our games.</p>
+				</div>
 			</section>
 
-			<h2 class="section-title page-title">Tech Stack</h2>
-			<div class="techstack" id="techstack">
+			<section class="section-block">
+				<h2 id="techstack-title" class="section-title page-title center-title"><span class="title-text">Tech Stack</span><span class="title-underline" aria-hidden="true"></span></h2>
+				<div class="techstack" id="techstack">
 				<a class="ts-item" href="https://unity.com/" target="_blank" rel="noopener" title="Unity official website">
 					<div class="ts-logo" data-anim data-color="#222222">
 						<span class="sheen" aria-hidden="true"></span>
@@ -100,21 +132,30 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 					<span class="ts-name">Kotlin Multiplatform</span>
 				</a>
 			</div>
+			</section>
 
-			<h2 class="section-title page-title">Game Showcase</h2>
-			<div class="grid">
+			<section class="section-block games-section">
+				<h2 id="games-title" class="section-title page-title center-title"><span class="title-text">Game Showcase</span></h2>
+				<div class="grid">
 				{games.map(({ id, data }) => (
 					<a class="card" href={`/games/${id}/`}>
-						{data.coverImage ? (
-							<img class="cover" src={data.coverImage.src} alt={data.title} width={data.coverImage.width} height={data.coverImage.height} />
+						{data.coverPath ? (
+						<img class="cover" src={data.coverPath} alt={data.title} />
+					) : data.coverImage ? (
+						typeof data.coverImage === 'string' ? (
+							<img class="cover" src={data.coverImage} alt={data.title} />
 						) : (
-							<div class="cover" />
-						)}
+							<img class="cover" src={data.coverImage.src} alt={data.title} width={data.coverImage.width} height={data.coverImage.height} />
+						)
+					) : (
+						<div class="cover" />
+					)}
 						<h3>{data.title}</h3>
 						<p>{data.description}</p>
 					</a>
 				))}
-			</div>
+				</div>
+			</section>
 		</main>
 		<Footer />
 		<!-- GSAP for fluid tech stack animation -->
@@ -278,6 +319,104 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 					el.addEventListener('focus', () => el.dispatchEvent(new Event('mouseenter')));
 					el.addEventListener('blur', () => el.dispatchEvent(new Event('mouseleave')));
 				});
+
+				// Tech Stack title: GSAP scramble text effect (centered)
+				const titleEl = document.getElementById('techstack-title');
+				if (titleEl) {
+					const textEl = titleEl.querySelector('.title-text');
+					const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+					const ORIGINAL_TEXT = (textEl && textEl.textContent) || 'Tech Stack';
+					const CHARS = '!<>-_/\\[]{}=+*^?#@%&$';
+					let running = null; // { kill: fn }
+					function scrambleTo(newText, duration = 0.8) {
+						if (!textEl || !window.gsap) return;
+						if (prefersReduced) { textEl.textContent = newText; return; }
+						// cancel previous
+						running && running.kill && running.kill();
+						const from = textEl.textContent || '';
+						const maxLen = Math.max(from.length, newText.length);
+						const queue = Array.from({ length: maxLen }).map((_, i) => {
+							return {
+								from: from[i] || '',
+								to: newText[i] || '',
+								start: Math.floor(Math.random() * 10),
+								end: Math.floor(Math.random() * 10) + 10
+							};
+						});
+						const state = { frame: 0 };
+						const render = () => {
+							let output = '';
+							for (let i = 0; i < queue.length; i++) {
+								const { from, to, start, end } = queue[i];
+								if (state.frame >= end) {
+									output += to;
+								} else if (state.frame >= start) {
+									output += CHARS[Math.floor(Math.random() * CHARS.length)];
+								} else {
+									output += from;
+								}
+							}
+							textEl.textContent = output;
+						};
+						const totalFrames = 24; // base frames; real time controlled by gsap duration
+						const tween = gsap.to(state, {
+							frame: totalFrames,
+							duration,
+							ease: 'none',
+							onUpdate: render,
+							onComplete: () => { textEl.textContent = newText; running = null; }
+						});
+						running = { kill: () => tween.kill() };
+					}
+					const onEnter = () => scrambleTo(ORIGINAL_TEXT, 0.8);
+					const onLeave = () => scrambleTo(ORIGINAL_TEXT, 0.45);
+					titleEl.addEventListener('mouseenter', onEnter);
+					titleEl.addEventListener('mouseleave', onLeave);
+					titleEl.addEventListener('focus', onEnter);
+					titleEl.addEventListener('blur', onLeave);
+				}
+
+				// Game Showcase title: GSAP scramble text effect
+				const gamesTitleEl = document.getElementById('games-title');
+				if (gamesTitleEl) {
+					const textEl = gamesTitleEl.querySelector('.title-text');
+					const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+					const ORIGINAL_TEXT = (textEl && textEl.textContent) || 'Game Showcase';
+					const CHARS = '!<>-_/\\[]{}=+*^?#@%&$';
+					let running = null;
+					function scrambleTo(newText, duration = 0.8) {
+						if (!textEl || !window.gsap) return;
+						if (prefersReduced) { textEl.textContent = newText; return; }
+						running && running.kill && running.kill();
+						const from = textEl.textContent || '';
+						const maxLen = Math.max(from.length, newText.length);
+						const queue = Array.from({ length: maxLen }).map((_, i) => ({
+							from: from[i] || '',
+							to: newText[i] || '',
+							start: Math.floor(Math.random() * 10),
+							end: Math.floor(Math.random() * 10) + 10,
+						}));
+						const state = { frame: 0 };
+						const render = () => {
+							let output = '';
+							for (let i = 0; i < queue.length; i++) {
+								const { from, to, start, end } = queue[i];
+								if (state.frame >= end) output += to;
+								else if (state.frame >= start) output += CHARS[Math.floor(Math.random() * CHARS.length)];
+								else output += from;
+							}
+							textEl.textContent = output;
+						};
+						const tween = gsap.to(state, { frame: 24, duration, ease: 'none', onUpdate: render, onComplete: () => { textEl.textContent = newText; running = null; } });
+						running = { kill: () => tween.kill() };
+					}
+					const onEnter = () => scrambleTo(ORIGINAL_TEXT, 0.8);
+					const onLeave = () => scrambleTo(ORIGINAL_TEXT, 0.45);
+					gamesTitleEl.addEventListener('mouseenter', onEnter);
+					gamesTitleEl.addEventListener('mouseleave', onLeave);
+					gamesTitleEl.addEventListener('focus', onEnter);
+					gamesTitleEl.addEventListener('blur', onLeave);
+				}
 
 				// Hero dynamic typing: keep 'We' static, animate suffix
 				const phrases = [

@@ -39,6 +39,7 @@ const games = defineCollection({
             pubDate: z.coerce.date(),
             updatedDate: z.coerce.date().optional(),
             coverImage: image().optional(),
+            coverPath: z.string().optional(),
             gallery: z.array(image()).default([]),
             platforms: z
                 .array(

@@ -11,30 +11,40 @@ const games = (await getCollection("games")).sort((a, b) => +b.data.pubDate - +a
   <head>
     <BaseHead title="Games | CORXLAB" description="Game showcases by CORXLAB" />
     <style>
-      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-      .card { background: #fff; border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; display: flex; flex-direction: column; }
-      .cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 8px; background: rgb(var(--gray-light)); }
-      .platforms { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
-      .badge { font-size: .85rem; padding: .25rem .5rem; border-radius: 999px; background: rgb(var(--gray-light)); color: rgb(var(--gray-dark)); }
+      .page { max-width: 1200px; margin: 0 auto; padding: 0 1rem 2rem; }
       .page-title { margin: 0 0 1rem 0; }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+      .card { background: rgb(var(--surface)); border: 1px solid rgba(var(--border), .35); border-radius: 12px; box-shadow: var(--box-shadow); padding: 1rem; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+      .cover { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 10px; background: rgb(var(--surface)); }
+      .card h3 { margin: .5rem 0 0; }
+      .card p { display: none; }
+      .platforms { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+      .badge { font-size: .8rem; padding: .25rem .55rem; border-radius: 999px; background: rgba(var(--border), .25); color: rgb(var(--gray-light)); border: 1px solid rgba(var(--border), .45); }
+      /* Larger covers on desktop, balanced on mobile */
+      @media (min-width: 1025px) { .cover { aspect-ratio: 5 / 4; } }
       @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-      @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+      @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .cover { aspect-ratio: 4 / 3; } }
     </style>
   </head>
   <body>
     <Header />
-    <main>
+    <main class="page">
       <h1 class="page-title">Games</h1>
       <div class="grid">
         {games.map(({ id, data }) => (
           <a class="card" href={`/games/${id}/`}>
-            {data.coverImage ? (
-              <img class="cover" src={data.coverImage.src} alt={data.title} width={data.coverImage.width} height={data.coverImage.height} />
+            {data.coverPath ? (
+              <img class="cover" src={data.coverPath} alt={data.title} />
+            ) : data.coverImage ? (
+              typeof data.coverImage === 'string' ? (
+                <img class="cover" src={data.coverImage} alt={data.title} />
+              ) : (
+                <img class="cover" src={data.coverImage.src} alt={data.title} width={data.coverImage.width} height={data.coverImage.height} />
+              )
             ) : (
               <div class="cover" />
             )}
             <h3 style="margin-top: .75rem;">{data.title}</h3>
-            <p style="margin: 0;">{data.description}</p>
             {data.platforms?.length ? (
               <div class="platforms">
                 {data.platforms.map(p => <span class="badge">{p.name}</span>)}
