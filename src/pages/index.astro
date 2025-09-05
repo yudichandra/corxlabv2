@@ -24,8 +24,8 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 			}
 			.hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,12,20,.55) 0%, rgba(8,12,20,.35) 60%, rgba(8,12,20,.55) 100%); pointer-events: none; }
 			.hero .inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; text-align: center; padding: 0 1rem; }
-			.hero h1 { margin: 0 0 .5rem 0; font-size: clamp(1.9rem, 3.2vw + .5rem, 2.8rem); font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
-			.hero p { color: rgba(255,255,255,.9); }
+			.hero h1 { margin: 0 0 .5rem 0; font-size: clamp(2.2rem, 4.2vw + .5rem, 3.4rem); font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+			.hero p { color: rgba(255,255,255,.9); font-size: clamp(1.1rem, 1.2vw + .7rem, 1.5rem); line-height: 1.7; }
 			@media (max-width: 1024px) {
 				.hero { min-height: 60vh; background-position: center 35%; }
 			}
@@ -89,12 +89,35 @@ const games = (await getCollection('games')).sort((a, b) => +b.data.pubDate - +a
 					</div>
 					<span class="ts-name">Unity</span>
 				</a>
-				<a class="ts-item" href="https://www.unrealengine.com/" target="_blank" rel="noopener" title="Unreal Engine official website">
+				<a class="ts-item" href="https://inkscape.org/" target="_blank" rel="noopener" title="Inkscape official website">
 					<div class="ts-logo" data-anim data-color="#000000">
 						<span class="sheen" aria-hidden="true"></span>
-						<img class="ts-img" src="https://cdn.simpleicons.org/unrealengine/000000" alt="Unreal Engine" loading="lazy" />
+						<img class="ts-img" src="https://cdn.simpleicons.org/inkscape/000000" alt="Inkscape" loading="lazy" />
 					</div>
-					<span class="ts-name">Unreal Engine</span>
+					<span class="ts-name">Inkscape</span>
+				</a>
+				<a class="ts-item" href="https://www.blender.org/" target="_blank" rel="noopener" title="Blender official website">
+					<div class="ts-logo" data-anim data-color="#F5792A">
+						<span class="sheen" aria-hidden="true"></span>
+						<img class="ts-img" src="https://cdn.simpleicons.org/blender/F5792A" alt="Blender" loading="lazy" />
+					</div>
+					<span class="ts-name">Blender</span>
+				</a>
+				<a class="ts-item" href="https://en.wikipedia.org/wiki/Sprite_(computer_graphics)" target="_blank" rel="noopener" title="Learn about Sprites">
+					<div class="ts-logo" data-anim data-color="#4CAF50">
+						<span class="sheen" aria-hidden="true"></span>
+						<svg class="ts-img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+							<path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 12H9v-2h2v2zm0-4H9V9h2v2zm0-4H9V5h2v2zm4 8h-2v-2h2v2zm0-4h-2V9h2v2zm0-4h-2V5h2v2z"/>
+						</svg>
+					</div>
+					<span class="ts-name">Sprite</span>
+				</a>
+				<a class="ts-item" href="https://ziglang.org/" target="_blank" rel="noopener" title="Zig official website">
+					<div class="ts-logo" data-anim data-color="#F7A41D">
+						<span class="sheen" aria-hidden="true"></span>
+						<img class="ts-img" src="https://cdn.simpleicons.org/zig/F7A41D" alt="Zig" loading="lazy" />
+					</div>
+					<span class="ts-name">Zig</span>
 				</a>
 				<a class="ts-item" href="https://godotengine.org/" target="_blank" rel="noopener" title="Godot official website">
 					<div class="ts-logo" data-anim data-color="#478CBF">
