@@ -33,7 +33,7 @@ html {
   font-synthesis-weight: none;
 }
 body {
-	font-family: "Lato", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, sans-serif;
+	font-family: 'JetBrains Mono', monospace;
 	margin: 0;
 	padding: 0;
 	text-align: left;
@@ -62,7 +62,7 @@ h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--text-strong));
 	line-height: 1.2;
-	font-family: "Baloo 2", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-family: 'JetBrains Mono', monospace;
 	letter-spacing: 0.005em;
 }
 h1 {
@@ -208,7 +208,7 @@ hr {
 
 /* Reusable page/section title utility (outside blog content) */
 .page-title {
-  font-family: "Baloo 2", ui-rounded, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
   letter-spacing: 0.005em;
   line-height: 1.15;
